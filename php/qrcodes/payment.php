@@ -34,7 +34,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("sis", $jina, $kiasi, $token);
 
 if ($stmt->execute()) {
-    // ✅ QR Code
+    // ✅ QR Code ya kawaida
     require_once 'php/qrlib.php';
 
     $folder = "../image/qrcodes/";
@@ -43,52 +43,26 @@ if ($stmt->execute()) {
     }
 
     $file = $folder . $token . ".png";
-    QRcode::png($token, $file, QR_ECLEVEL_L, 6);
 
-    // 🖼️ Ongeza logo kwenye QR
-    $qr = imagecreatefrompng($file);
-    $logoPath = "../image/suuh.JPG";
-    if (file_exists($logoPath)) {
-        $logo = imagecreatefromjpeg($logoPath); // ✅ Hii ni JPG sasa
-
-        $qr_width = imagesx($qr);
-        $qr_height = imagesy($qr);
-        $logo_width = imagesx($logo);
-        $logo_height = imagesy($logo);
-
-        $logo_qr_width = $qr_width / 4;
-        $scale = $logo_width / $logo_qr_width;
-        $logo_qr_height = $logo_height / $scale;
-
-        imagecopyresampled($qr, $logo,
-            ($qr_width - $logo_qr_width) / 2,
-            ($qr_height - $logo_qr_height) / 2,
-            0, 0,
-            $logo_qr_width, $logo_qr_height,
-            $logo_width, $logo_height
-        );
-
-        // ✨ Glow effect
-        imagefilter($qr, IMG_FILTER_GAUSSIAN_BLUR);
-
-        imagepng($qr, $file);
-    }
+    // 🧾 Maandishi ndani ya QR
+    $qrText = "Jina: $jina\nKiasi: TZS $kiasi";
+    QRcode::png($qrText, $file, QR_ECLEVEL_L, 6);
 
     // 🎉 Onyesha ujumbe wa mafanikio
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Asante kwa Mchango</title>
     <style>
-      body { font-family: 'Segoe UI', sans-serif; background: #fff0f5; text-align: center; padding: 40px; color: #880e4f; }
+      body { font-family: 'Segoe UI', sans-serif; background: #f0fff0; text-align: center; padding: 40px; color: #006400; }
       h2 { font-size: 2rem; margin-bottom: 20px; }
-      img { margin-top: 20px; box-shadow: 0 0 25px #ff1493; border-radius: 12px; }
-      a { display: inline-block; margin-top: 30px; background: #d81b60; color: white; padding: 12px 24px; border-radius: 30px;
-          text-decoration: none; font-weight: bold; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.5); }
-      a:hover { background: #880e4f; transform: scale(1.05); }
+      img { margin-top: 20px; border: 2px solid #006400; border-radius: 8px; }
+      a { display: inline-block; margin-top: 30px; background: #228b22; color: white; padding: 12px 24px; border-radius: 30px;
+          text-decoration: none; font-weight: bold; box-shadow: 0 6px 15px rgba(34, 139, 34, 0.5); }
+      a:hover { background: #006400; transform: scale(1.05); }
     </style></head><body>";
 
     echo "<h2>Asante sana <strong>$jina</strong> kwa kuchangia <strong>TZS $kiasi</strong>!</h2>";
     echo "<p>Hii hapa QR code yako ya uthibitisho:</p>";
     echo "<img src='$file' alt='QR Code' width='220'>";
-    echo "<br><a href='../payment.html'>Rudi kwenye ukurasa wa malipo</a>";
+    echo "<br><a href='https://0fe2be44cd74.ngrok-free.app/payment.html'>Rudi kwenye ukurasa wa malipo</a>";
 
     echo "</body></html>";
 
