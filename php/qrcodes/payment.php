@@ -1,9 +1,9 @@
 <?php
 // ⚙️ Taarifa za DB
 $servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "hamis";
+$username   = "root";
+$password   = "";
+$dbname     = "hamis";
 
 // 🔌 Unganisha DB
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -11,13 +11,13 @@ if ($conn->connect_error) {
     die("Kosa la kuunganisha DB: " . $conn->connect_error);
 }
 
-// 🛡️ Hakikisha data imetumwa
+// 🛡️ Hakikisha data imetumwa kupitia POST
 if (!isset($_POST['jina'], $_POST['kiasi'])) {
     die("Data haijatumwa ipasavyo.");
 }
 
 // 🧼 Safisha data
-$jina = $conn->real_escape_string(trim($_POST['jina']));
+$jina  = $conn->real_escape_string(trim($_POST['jina']));
 $kiasi = intval($_POST['kiasi']);
 
 // ✅ Kagua vigezo
@@ -26,18 +26,19 @@ if (empty($jina) || $kiasi < 100 || $kiasi > 500000) {
 }
 
 // 🔐 Tengeneza token ya kipekee
-$token = uniqid('hamis_');
+$token = uniqid('hamis_', true);
 
-// 💾 Ingiza DB
-$sql = "INSERT INTO malipo (jina, kiasi, token) VALUES (?, ?, ?)";
+// 💾 Ingiza data kwenye DB
+$sql  = "INSERT INTO malipo (jina, kiasi, token) VALUES (?, ?, ?)";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sis", $jina, $kiasi, $token);
 
 if ($stmt->execute()) {
-    // ✅ QR Code ya kawaida
-    require_once 'php/qrlib.php';
+    // ✅ Tengeneza QR Code
+    require_once __DIR__ . '/phpqrcode/qrlib.php';
 
-    $folder = "../image/qrcodes/";
+    // Folder la kuhifadhia QR
+    $folder = __DIR__ . "/image/qrcodes/";
     if (!file_exists($folder)) {
         mkdir($folder, 0777, true);
     }
@@ -45,7 +46,7 @@ if ($stmt->execute()) {
     $file = $folder . $token . ".png";
 
     // 🧾 Maandishi ndani ya QR
-    $qrText = "Jina: $jina\nKiasi: TZS $kiasi";
+    $qrText = "Jina: $jina\nKiasi: TZS $kiasi\nToken: $token";
     QRcode::png($qrText, $file, QR_ECLEVEL_L, 6);
 
     // 🎉 Onyesha ujumbe wa mafanikio
@@ -61,8 +62,10 @@ if ($stmt->execute()) {
 
     echo "<h2>Asante sana <strong>$jina</strong> kwa kuchangia <strong>TZS $kiasi</strong>!</h2>";
     echo "<p>Hii hapa QR code yako ya uthibitisho:</p>";
-    echo "<img src='$file' alt='QR Code' width='220'>";
-    echo "<br><a href='https://0fe2be44cd74.ngrok-free.app/payment.html'>Rudi kwenye ukurasa wa malipo</a>";
+    // tumia relative path ili browser ipate image
+    $imgPath = "image/qrcodes/love.png" . $token . ".png";
+    echo "<img src='$imgPath' alt='QR Code' width='220'>";
+    echo "<br><a>ASANTE</a>";
 
     echo "</body></html>";
 
@@ -73,3 +76,4 @@ if ($stmt->execute()) {
 $stmt->close();
 $conn->close();
 ?>
+
