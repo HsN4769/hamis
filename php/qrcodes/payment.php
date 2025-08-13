@@ -37,7 +37,7 @@ if ($stmt->execute()) {
     // ✅ QR Code
     require_once 'phpqrcode/qrlib.php';
 
-    $folder = "../images/qrcodes/";
+    $folder = "../image/qrcodes/";
     if (!file_exists($folder)) {
         mkdir($folder, 0777, true);
     }
@@ -51,10 +51,10 @@ if ($stmt->execute()) {
     if (file_exists($logoPath)) {
         $logo = imagecreatefrompng($logoPath);
 
-        $qr_width = imagesx($qr);
-        $qr_height = imagesy($qr);
-        $logo_width = imagesx($logo);
-        $logo_height = imagesy($logo);
+        $qr_width = imagex($qr);
+        $qr_height = imagey($qr);
+        $logo_width = imagex($logo);
+        $logo_height = imagey($logo);
 
         $logo_qr_width = $qr_width / 4;
         $scale = $logo_width / $logo_qr_width;
