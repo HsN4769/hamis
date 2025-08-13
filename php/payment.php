@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "harusi";
+$dbname = "hamis";
 
 // 🔌 Unganisha DB
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -26,7 +26,7 @@ if (empty($jina) || $kiasi < 100 || $kiasi > 500000) {
 }
 
 // 🔐 Tengeneza token ya kipekee
-$token = uniqid('harusi_');
+$token = uniqid('hamis_');
 
 // 💾 Ingiza DB
 $sql = "INSERT INTO malipo (jina, kiasi, token) VALUES (?, ?, ?)";
