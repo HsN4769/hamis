@@ -35,7 +35,7 @@ $stmt->bind_param("sis", $jina, $kiasi, $token);
 
 if ($stmt->execute()) {
     // ✅ QR Code
-    require_once 'phpqrcode/qrlib.php';
+    require_once 'php/qrlib.php';
 
     $folder = "../image/qrcodes/";
     if (!file_exists($folder)) {
@@ -49,12 +49,12 @@ if ($stmt->execute()) {
     $qr = imagecreatefrompng($file);
     $logoPath = "../image/suuh.JPG";
     if (file_exists($logoPath)) {
-        $logo = imagecreatefrompng($logoPath);
+        $logo = imagecreatefromjpeg($logoPath); // ✅ Hii ni JPG sasa
 
-        $qr_width = imagex($qr);
-        $qr_height = imagey($qr);
-        $logo_width = imagex($logo);
-        $logo_height = imagey($logo);
+        $qr_width = imagesx($qr);
+        $qr_height = imagesy($qr);
+        $logo_width = imagesx($logo);
+        $logo_height = imagesy($logo);
 
         $logo_qr_width = $qr_width / 4;
         $scale = $logo_width / $logo_qr_width;
@@ -65,7 +65,11 @@ if ($stmt->execute()) {
             ($qr_height - $logo_qr_height) / 2,
             0, 0,
             $logo_qr_width, $logo_qr_height,
-            $logo_width, $logo_height);
+            $logo_width, $logo_height
+        );
+
+        // ✨ Glow effect
+        imagefilter($qr, IMG_FILTER_GAUSSIAN_BLUR);
 
         imagepng($qr, $file);
     }
