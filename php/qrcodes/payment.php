@@ -63,7 +63,7 @@ if ($stmt->execute()) {
     echo "<h2>Asante sana <strong>$jina</strong> kwa kuchangia <strong>TZS $kiasi</strong>!</h2>";
     echo "<p>Hii hapa QR code yako ya uthibitisho:</p>";
     // tumia relative path ili browser ipate image
-    $imgPath = "image/qrcodes/love.png" . $token . ".png";
+    $imgPath = "qrcodes/image/love.png" . $token . ".png";
     echo "<img src='$imgPath' alt='QR Code' width='220'>";
     echo "<br><a>ASANTE</a>";
 
