@@ -47,7 +47,7 @@ if ($stmt->execute()) {
 
     // 🖼️ Ongeza logo kwenye QR
     $qr = imagecreatefrompng($file);
-    $logoPath = "../images/logo.png";
+    $logoPath = "../image/suuh.JPG";
     if (file_exists($logoPath)) {
         $logo = imagecreatefrompng($logoPath);
 
