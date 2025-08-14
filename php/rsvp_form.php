@@ -1,22 +1,21 @@
 <?php
 session_start();
 
+// Retrieve session messages if any
 $errors = $_SESSION['errors'] ?? [];
 $success = $_SESSION['success'] ?? '';
 $old = $_SESSION['old'] ?? ['jina' => '', 'barua' => '', 'ujumbe' => ''];
 
-// Ondoa data baada ya kuonyesha ili isionekane tena kwenye reload
+// Clear session data after retrieval
 unset($_SESSION['errors'], $_SESSION['success'], $_SESSION['old']);
 ?>
 <!DOCTYPE html>
 <html lang="sw">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RSVP - Thibitisha Uwepo Wako</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
-    /* Hapa weka style kama ulivyotaka, nimeshusha kwa kifupi kwa ajili ya muundo */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #fce4ec, #ffe0b2);
@@ -29,7 +28,13 @@ unset($_SESSION['errors'], $_SESSION['success'], $_SESSION['old']);
       align-items: center;
       text-align: center;
     }
-    h2 { font-size: 2.4rem; font-weight: 700; margin-bottom: 25px; color: #d81b60; text-shadow: 1px 1px 3px rgba(136,14,79,0.3); }
+    h2 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: #d81b60;
+      text-shadow: 1px 1px 3px rgba(136,14,79,0.3);
+    }
     form {
       background: #fff0f5;
       padding: 25px 20px;
@@ -40,7 +45,6 @@ unset($_SESSION['errors'], $_SESSION['success'], $_SESSION['old']);
       display: flex;
       flex-direction: column;
       gap: 15px;
-      position: relative;
     }
     input[type="text"], input[type="email"], textarea {
       padding: 12px 15px;
@@ -71,14 +75,31 @@ unset($_SESSION['errors'], $_SESSION['success'], $_SESSION['old']);
       cursor: pointer;
       box-shadow: 0 6px 15px rgba(216, 27, 96, 0.4);
       transition: background-color 0.3s ease;
-      user-select: none;
       width: 100%;
       max-width: 100%;
     }
     .btn:hover { background-color: #880e4f; }
     .messages { max-width: 450px; margin-bottom: 20px; }
-    .messages .success { background-color: #d4edda; color: #155724; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(21, 87, 40, 0.3); }
-    .messages .error { background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(114, 28, 36, 0.3); }
+    .messages .success {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(21, 87, 40, 0.3);
+    }
+    .messages .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(114, 28, 36, 0.3);
+    }
+    @media(max-width: 500px){
+      h2 { font-size: 2rem; }
+      form { padding: 20px; }
+    }
   </style>
 </head>
 <body>
