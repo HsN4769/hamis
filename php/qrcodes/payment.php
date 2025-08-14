@@ -1,79 +1,51 @@
 <?php
-// ⚙️ Taarifa za DB
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "hamis";
+// Include QR Code library
+include 'phpqrcode/qrlib.php';
 
-// 🔌 Unganisha DB
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Kosa la kuunganisha DB: " . $conn->connect_error);
-}
+// Pata data kutoka kwenye form (kama ipo)
+$name = isset($_POST['name']) ? $_POST['name'] : '';
+$email = isset($_POST['email']) ? $_POST['email'] : '';
+$amount = isset($_POST['amount']) ? $_POST['amount'] : '';
 
-// 🛡️ Hakikisha data imetumwa kupitia POST
-if (!isset($_POST['jina'], $_POST['kiasi'])) {
-    die("Data haijatumwa ipasavyo.");
-}
-
-// 🧼 Safisha data
-$jina  = $conn->real_escape_string(trim($_POST['jina']));
-$kiasi = intval($_POST['kiasi']);
-
-// ✅ Kagua vigezo
-if (empty($jina) || $kiasi < 100 || $kiasi > 500000) {
-    die("Tafadhali jaza jina na kiasi kati ya TZS 100 - 500,000.");
-}
-
-// 🔐 Tengeneza token ya kipekee
-$token = uniqid('hamis_', true);
-
-// 💾 Ingiza data kwenye DB
-$sql  = "INSERT INTO malipo (jina, kiasi, token) VALUES (?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sis", $jina, $kiasi, $token);
-
-if ($stmt->execute()) {
-    // ✅ Tengeneza QR Code
-    require_once __DIR__ . '/phpqrcode/qrlib.php';
-
-    // Folder la kuhifadhia QR
-    $folder = __DIR__ . "/image/qrcodes/";
-    if (!file_exists($folder)) {
-        mkdir($folder, 0777, true);
+// Kagua kama data zimejazwa
+if ($name && $email && $amount) {
+    // Path ya kuhifadhi QR code
+    $qrFolder = "image/";
+    if (!file_exists($qrFolder)) {
+        mkdir($qrFolder);
     }
 
-    $file = $folder . $token . ".png";
+    // Faili jina kwa QR code
+    $qrFile = $qrFolder . uniqid() . ".png";
 
-    // 🧾 Maandishi ndani ya QR
-    $qrText = "Jina: $jina\nKiasi: TZS $kiasi\nToken: $token";
-    QRcode::png($qrText, $file, QR_ECLEVEL_L, 6);
+    // Data itakayoingia kwenye QR
+    $qrData = "Jina: $name\nEmail: $email\nKiasi: $amount";
 
-    // 🎉 Onyesha ujumbe wa mafanikio
-    echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Asante kwa Mchango</title>
-    <style>
-      body { font-family: 'Segoe UI', sans-serif; background: #f0fff0; text-align: center; padding: 40px; color: #006400; }
-      h2 { font-size: 2rem; margin-bottom: 20px; }
-      img { margin-top: 20px; border: 2px solid #006400; border-radius: 8px; }
-      a { display: inline-block; margin-top: 30px; background: #228b22; color: white; padding: 12px 24px; border-radius: 30px;
-          text-decoration: none; font-weight: bold; box-shadow: 0 6px 15px rgba(34, 139, 34, 0.5); }
-      a:hover { background: #006400; transform: scale(1.05); }
-    </style></head><body>";
+    // Tengeneza QR code
+    QRcode::png($qrData, $qrFile, QR_ECLEVEL_L, 6);
 
-    echo "<h2>Asante sana <strong>$jina</strong> kwa kuchangia <strong>TZS $kiasi</strong>!</h2>";
-    echo "<p>Hii hapa QR code yako ya uthibitisho:</p>";
-    // tumia relative path ili browser ipate image
-    $imgPath = "qrcodes/image/love.png" . $token . ".png";
-    echo "<img src='$imgPath' alt='QR Code' width='220'>";
-    echo "<br><a>ASANTE</a>";
-
-    echo "</body></html>";
-
+    $message = "Malipo yamekamilika! Hii hapa QR code yako ya uthibitisho:";
 } else {
-    echo "Kuna tatizo lililotokea: " . $stmt->error;
+    $message = "Tafadhali jaza taarifa zote ili kuendelea.";
+    $qrFile = "";
 }
-
-$stmt->close();
-$conn->close();
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Confirmation</title>
+    <link rel="stylesheet" href="css/image-styles.css">
+</head>
+<body>
+    <h2><?php echo $message; ?></h2>
 
+    <?php if ($qrFile) { ?>
+        <div>
+            <img src="<?php echo $qrFile; ?>" alt="QR Code" style="width:200px;height:200px;">
+        </div>
+        <a href="payment.html">Rudi kwenye ukurasa wa malipo</a>
+    <?php } else { ?>
+        <a href="payment.html">Rudi nyuma</a>
+    <?php } ?>
+</body>
+</html>
